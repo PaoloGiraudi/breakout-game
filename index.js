@@ -10,11 +10,16 @@ let yDirection = 2;
 let timerId;
 let score = 0;
 
+// Start position for the user and the ball
+
 const userStart = [230, 10];
 let userCurrentPosition = userStart;
 
 const ballStart = [270, 40];
 let ballCurrentPosition = ballStart;
+
+// Class component for creating the blocks
+// It uses the x and y axis to calculate and store the 4 edges into state
 
 class Block {
   constructor(xAxis, yAxis) {
@@ -43,6 +48,8 @@ const blocks = [
   new Block(450, 210),
 ];
 
+// Creates a block node and add it to the grid
+
 function addBlocks() {
   for (let block of blocks) {
     const blockNode = document.createElement("div");
@@ -55,18 +62,19 @@ function addBlocks() {
 
 addBlocks();
 
-// add user
+// Creates and add the user on the page
+
 const user = document.createElement("div");
 user.classList.add("user");
 drawUser();
 grid.appendChild(user);
 
-// draw user
-
 function drawUser() {
   user.style.left = `${userCurrentPosition[0]}px`;
   user.style.bottom = `${userCurrentPosition[1]}px`;
 }
+
+// Listens to the keyboard event ans moves the user left or right
 
 function moveUser(e) {
   switch (e.key) {
@@ -87,7 +95,7 @@ function moveUser(e) {
 
 document.addEventListener("keydown", moveUser);
 
-// add ball
+// Creates and draws the ball
 
 const ball = document.createElement("div");
 ball.classList.add("ball");
@@ -99,6 +107,8 @@ function drawBall() {
   ball.style.bottom = `${ballCurrentPosition[1]}px`;
 }
 
+// Move the ball automatically every 20ms and check for collitions
+
 function moveBall() {
   ballCurrentPosition[0] += xDirection;
   ballCurrentPosition[1] += yDirection;
@@ -109,7 +119,6 @@ function moveBall() {
 timerId = setInterval(moveBall, 20);
 
 function checkForCollition() {
-  // check block collition
   for (let i = 0; i < blocks.length; i++) {
     if (
       ballCurrentPosition[0] > blocks[i].bottomLeft[0] &&
@@ -124,7 +133,8 @@ function checkForCollition() {
       score++;
       scoreDisplay.innerHTML = score;
 
-      // check win
+      // Check for the win
+
       if (blocks.length === 0) {
         scoreDisplay.innerHTML = "You Win!";
         clearInterval(timerId);
@@ -133,7 +143,8 @@ function checkForCollition() {
     }
   }
 
-  // check for wall collition
+  // Check for wall collition
+
   if (
     ballCurrentPosition[0] >= boardWidth - ballDiameter ||
     ballCurrentPosition[1] >= boardHeight - ballDiameter ||
@@ -142,7 +153,8 @@ function checkForCollition() {
     changeDirection();
   }
 
-  // check for user collition
+  // Check for user collition
+
   if (
     ballCurrentPosition[0] > userCurrentPosition[0] &&
     ballCurrentPosition[0] < userCurrentPosition[0] + blockWidth &&
@@ -152,13 +164,16 @@ function checkForCollition() {
     changeDirection();
   }
 
-  // check game over
+  // Check for game over
+
   if (ballCurrentPosition[1] <= 0) {
     clearInterval(timerId);
     scoreDisplay.innerHTML = "Game Over";
     document.removeEventListener("keydown", moveUser);
   }
 }
+
+// Takes care of the ball direction change
 
 function changeDirection() {
   if (xDirection === 2 && yDirection === 2) {
